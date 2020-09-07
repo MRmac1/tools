@@ -1,0 +1,19 @@
+{
+  "name": "tools",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "archy": "^1.0.0",
+    "walker": "^1.0.7"
+  },
+  "scripts": {
+    "build": "babel src -w -d lib",
+    "start": "node bin/index.js"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.x",
+    "@babel/core": "^7.x",
+    "@babel/preset-env": "^7.x"
+  }
+}
