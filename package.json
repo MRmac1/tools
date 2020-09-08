@@ -5,6 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "archy": "^1.0.0",
+    "exif": "^0.6.0",
     "walker": "^1.0.7"
   },
   "scripts": {

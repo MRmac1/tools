@@ -10,8 +10,11 @@ import path from 'path';
 // import Table from 'cli-table';
 import archy from 'archy';
 import Walker from 'walker';
+import { ExifImage } from 'exif';
 
-const photoPath = path.join('/Users/qinglu/Documents/日常/DCIM/100CANON');
+
+const photoPath = path.join(__dirname, '../test');
+// const photoPath = path.join('/Users/mr_mac1/Documents/文档/生活/照片');
 
 // const photoDir = fs.readdirSync(photoPath);
 
@@ -29,12 +32,39 @@ function formatDate(date) {
   return [year, month].join('-');
 }
 
+
+function getExifDate(file) {
+  return new Promise((resolve) => {
+    new ExifImage({ image : file }, function (error, exifData) {
+      if (error) {
+        return resolve({})
+      } else {
+        return resolve(exifData);
+      }
+    });
+  })
+}
+
 const photoWalker = function(photoPath) {
   const photoMonthMap = new Map();
   return Walker(photoPath)
-    .on('file', function(file, stat) {
-      if (file.endsWith('.JPG')) {
-        const fileCreatedDate = formatDate(stat.birthtime);
+    .on('file', async function(file, stat) {
+      if (file.endsWith('.jpg')) {
+        const photoInfo = await getExifDate(file);
+
+        let fileCreatedDate;
+
+        if (!photoInfo.exif) {
+          // 没有 exif 信息取 stat.brithtime
+          console.log('stat', stat.brithtime);
+          fileCreatedDate = formatDate(stat.brithtime);
+        } else {
+          const photoExif = photoInfo.exif;
+          console.log('photoExif.CreateDate', photoExif.CreateDate)
+          console.log('photoExif.CreateDate type', typeof photoExif.CreateDate)
+          const [year, month] = `${photoExif.CreateDate}`.replaceAll(':', '-').split('-')
+          fileCreatedDate = `${year}-${month}`;
+        }
         if (photoMonthMap.has(fileCreatedDate)) {
           const dateFiles = photoMonthMap.get(fileCreatedDate);
           photoMonthMap.set(fileCreatedDate, [...dateFiles, file])
