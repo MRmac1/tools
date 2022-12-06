@@ -1,1 +1,1 @@
-require('../lib/photoClassifyByMonth');
+require('../lib/index');
